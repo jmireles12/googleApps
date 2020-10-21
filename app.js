@@ -4,27 +4,28 @@ const cors = require('cors');
 
 const app = express();
 
-app.use(morgan('dev'));
+app.use(morgan('common'));
 app.use(cors());
 
 const apps = require('./google-apps');
 
 app.get('/apps', (req, res) => {
-    const { search = '', sort, genre } = req.query;
+    const { search = '', sort, /* genre */ } = req.query;
 
     if(sort) {
         if(!['App', 'Rating'].includes(sort)) {
-            return res.status(400).send('Sort must be one of app or rating')
+            return res.status(400).send('Sort must be one of app or rating');
         }
     }
 
-    if(genre) {
+    /* if(genre) {
         if(!['Action', 'Puzzle', 'Strategy', 'Casual', 'Arcade', 'Card'].includes(genre)) {
+            console.log(error)
             return res.status(400).send('Genre must be on of Action, Puzzle, Strategy, Casual, Arcade, Card')
         }
-    }
+    } */
 
-    let results = apps.filter(app => app.App.toLowerCase().includes(search.toLowerCase()))
+    let results = apps.filter(app => app.App.toLowerCase().includes(search.toLowerCase()));
     
 
     if(sort) {
@@ -33,12 +34,13 @@ app.get('/apps', (req, res) => {
         });
     }
 
-    results = apps.filter(app => app.Genres.includes(genre))
-
-    res.json(results)
-
+  /*   if(genre) {
+        results.sort((a, b) => {
+            return a[genre] > b[genre] ? 1 : a[genre] < b[genre] ? -1: 0;
+        })
+    }
+ */
+    res.json(results);
 })
 
-app.listen(8000, () => {
-    console.log('Server started on PORT 8000');
-})
+module.exports = app;
